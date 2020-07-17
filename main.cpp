@@ -1,6 +1,8 @@
-#include <iostream>
+#include <GLFW/glfw3.h>
+#include <thread>
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    glfwInit();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    glfwTerminate();
 }
