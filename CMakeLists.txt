@@ -8,9 +8,12 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 find_package(OpenGL REQUIRED)
 find_package(GLFW3 REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(PNG REQUIRED)
+
+add_subdirectory(dependencies/soil)
 
 add_executable(Siksaksuk main.cpp)
 
-target_link_libraries(Siksaksuk ${OPENGL_LIBRARIES} ${GLFW3_LIBRARY} ${GLEW_LIBRARIES} PNG::PNG)
+target_link_libraries(Siksaksuk PUBLIC ${OPENGL_LIBRARIES} ${GLFW3_LIBRARY} ${GLEW_LIBRARIES} soil)
 target_include_directories(Siksaksuk SYSTEM PUBLIC ${OPENGL_INCLUDE_DIRS} ${GLFW3_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS})
+
+add_subdirectory(../box2d box2d EXCLUDE_FROM_ALL)
