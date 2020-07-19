@@ -15,6 +15,23 @@ namespace tk {
 
     struct Render {
         Render() {
+            glfwInit();
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+            glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+            const auto *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+            window = glfwCreateWindow(mode->width, mode->height, "OpenGL", nullptr, nullptr);
+
+            glfwMakeContextCurrent(window);
+
+            glewExperimental = GL_TRUE;
+            glewInit();
+
             // Create and compile the vertex shader
             vertexShader = glCreateShader(GL_VERTEX_SHADER);
             glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -34,8 +51,14 @@ namespace tk {
 
         }
 
-        Image loadImage(const char *png, std::vector<GLfloat> vertices) {
-            Image image{};
+        Image loadImage(const char *png, const Vec2f &topLeft, const Vec2f &bottomRight) {
+            Image image{topLeft, bottomRight};
+
+            std::vector<GLfloat> vertices{
+                    image.topLeft.x, image.topLeft.y, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                    image.bottomRight.x, image.topLeft.y, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                    image.bottomRight.x, image.bottomRight.y, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+                    image.topLeft.x, image.bottomRight.y, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f};
 
             // Create Vertex Array Object
             glGenVertexArrays(1, &image.vao);
@@ -86,7 +109,7 @@ namespace tk {
         }
 
 
-        void drawImage(const Image& image) {
+        void drawImage(const Image &image) {
             glUseProgram(shaderProgram);
             glBindVertexArray(image.vao);
             glBindBuffer(GL_ARRAY_BUFFER, image.vbo);
@@ -99,8 +122,11 @@ namespace tk {
             glDeleteProgram(shaderProgram);
             glDeleteShader(fragmentShader);
             glDeleteShader(vertexShader);
+
+            glfwTerminate();
         }
 
+        GLFWwindow *window;
         GLuint shaderProgram, fragmentShader, vertexShader;
         std::vector<GLuint> elements = {0, 1, 2,
                                         2, 3, 0};
