@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 
-#include <Image.h>
+#include <tk/Render.h>
 
 int main() {
     glfwInit();
@@ -22,11 +22,19 @@ int main() {
     glewExperimental = GL_TRUE;
     glewInit();
 
-    Obj o1{"../res/0_l.png", {
+    tk::Render render{};
+
+    const auto o1{render.loadImage("../res/0_l.png", {
             -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f})};
+
+    const auto o2{render.loadImage("../res/0_r.png", {
+            0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
             0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
             0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f}};
+            0.0f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f})};
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -36,7 +44,8 @@ int main() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        o1.draw();
+        render.drawImage(o1);
+        render.drawImage(o2);
 
         glfwSwapBuffers(window);
     }
