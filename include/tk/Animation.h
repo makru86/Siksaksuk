@@ -4,26 +4,10 @@
 #include <memory>
 #include <chrono>
 
+#include <tk/Clock.h>
 #include <tk/Image.h>
 
 namespace tk {
-
-    using Duration = std::chrono::duration<double>;
-
-    using namespace std::chrono_literals;
-
-    class Clock {
-    public:
-        Duration getElapsedTime() const {
-            return std::chrono::system_clock::now() - time_;
-        }
-
-        void reset() { time_ = std::chrono::system_clock::now(); }
-
-    private:
-        std::chrono::time_point<
-                std::chrono::system_clock> time_{std::chrono::system_clock::now()};
-    };
 
     class Animation {
     public:

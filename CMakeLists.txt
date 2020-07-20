@@ -15,6 +15,7 @@ add_executable(Siksaksuk main.cpp
         include/tk/Image.h
         include/tk/Render.h
         include/tk/Animation.h
+        include/tk/Clock.h
         source/Image.cpp)
 
 target_link_libraries(Siksaksuk PUBLIC ${OPENGL_LIBRARIES} ${GLFW3_LIBRARY} ${GLEW_LIBRARIES} soil)
