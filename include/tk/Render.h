@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <filesystem>
+#include <memory>
 
 #include <SOIL/SOIL.h>
 #include <GL/glew.h>
@@ -51,30 +52,34 @@ namespace tk {
 
         }
 
-        Image loadImage(const char *png, const Vec2f &topLeft, const Vec2f &bottomRight) {
-            Image image{topLeft, bottomRight};
+        std::shared_ptr<Image> loadImage(const char *png, const Vec2f &topLeft, const Vec2f &bottomRight) {
+            auto image = std::make_shared<Image>(topLeft, bottomRight);
 
             std::vector<GLfloat> vertices{
-                    image.topLeft.x, image.topLeft.y, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                    image.bottomRight.x, image.topLeft.y, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-                    image.bottomRight.x, image.bottomRight.y, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-                    image.topLeft.x, image.bottomRight.y, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f};
+                    image->topLeft.x, image->topLeft.y, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                    image->bottomRight.x, image->topLeft.y, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                    image->bottomRight.x, image->bottomRight.y, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+                    image->topLeft.x, image->bottomRight.y, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f};
 
             // Create Vertex Array Object
-            glGenVertexArrays(1, &image.vao);
-            glBindVertexArray(image.vao);
+            glGenVertexArrays(1, &image->vao);
+            glBindVertexArray(image->vao);
 
             // Create a Vertex Buffer Object and copy the vertex data to it
-            glGenBuffers(1, &image.vbo);
+            glGenBuffers(1, &image->vbo);
 
-            glBindBuffer(GL_ARRAY_BUFFER, image.vbo);
-            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, image->vbo);
+            glBufferData(GL_ARRAY_BUFFER,
+                         vertices.size() * sizeof(decltype(vertices)::value_type), vertices.data(),
+                         GL_STATIC_DRAW);
 
             // Create an element array
-            glGenBuffers(1, &image.ebo);
+            glGenBuffers(1, &image->ebo);
 
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, image.ebo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLuint), elements.data(), GL_STATIC_DRAW);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, image->ebo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                         elements.size() * sizeof(decltype(elements)::value_type), elements.data(),
+                         GL_STATIC_DRAW);
 
             // Specify the layout of the vertex data
             GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -92,8 +97,8 @@ namespace tk {
                                   (void *) (5 * sizeof(GLfloat)));
 
             // Load texture
-            glGenTextures(1, &image.tex);
-            glBindTexture(GL_TEXTURE_2D, image.tex);
+            glGenTextures(1, &image->tex);
+            glBindTexture(GL_TEXTURE_2D, image->tex);
 
             int width, height;
             unsigned char *data = SOIL_load_image(png, &width, &height, 0, SOIL_LOAD_RGB);
@@ -109,12 +114,12 @@ namespace tk {
         }
 
 
-        void drawImage(const Image &image) {
+        void drawImage(const std::shared_ptr<Image> &image) {
             glUseProgram(shaderProgram);
-            glBindVertexArray(image.vao);
-            glBindBuffer(GL_ARRAY_BUFFER, image.vbo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, image.ebo);
-            glBindTexture(GL_TEXTURE_2D, image.tex);
+            glBindVertexArray(image->vao);
+            glBindBuffer(GL_ARRAY_BUFFER, image->vbo);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, image->ebo);
+            glBindTexture(GL_TEXTURE_2D, image->tex);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
 

@@ -20,6 +20,12 @@ namespace tk {
         Image(const Vec2f &topLeft, const Vec2f &bottomRight)
                 : topLeft{topLeft}, bottomRight{bottomRight} {}
 
+        Image(const Image &) = delete;
+        Image(Image &&) = default;
+
+        Image &operator=(const Image &) = delete;
+        Image &operator=(Image &&) = default;
+
         ~Image() {
             glDeleteTextures(1, &tex);
             glDeleteBuffers(1, &ebo);
@@ -34,5 +40,7 @@ namespace tk {
 
         GLuint vao, vbo, ebo, tex;
     };
+
+    using ImagePtr = std::shared_ptr<Image>;
 
 }
