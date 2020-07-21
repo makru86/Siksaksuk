@@ -11,7 +11,9 @@ find_package(GLEW REQUIRED)
 
 add_subdirectory(dependencies/soil)
 
-add_executable(Siksaksuk main.cpp
+add_executable(Siksaksuk
+        main.cpp
+        Player.h
         include/tk/Image.h
         include/tk/Render.h
         include/tk/Animation.h

@@ -19,7 +19,7 @@ namespace tk {
 
         void update(const Duration &elapsed) {
             elapsed_ += elapsed;
-            if (elapsed_ >= totalDuration_) {
+            while (elapsed_ >= totalDuration_) {
                 elapsed_ -= totalDuration_;
             }
 

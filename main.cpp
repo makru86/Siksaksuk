@@ -1,23 +1,13 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <SOIL/SOIL.h>
+#include <iostream>
 
-#include <tk/Render.h>
-#include <tk/Animation.h>
+#include "Player.h"
 
 using namespace std::chrono_literals;
 
 int main() {
     tk::Render render{};
 
-    tk::Animation a1{};
-
-    for (auto i{0}; i != 18; ++i) {
-        std::stringstream ss{};
-        ss << "../res/" << i << "_l.png";
-        a1.addImage(render.loadImage(ss.str().c_str(), {-0.5f, 0.5f}, {0.0f, -0.5f}),
-                    0.4s);
-    }
+    Player p1{render};
 
     const auto o2{render.loadImage("../res/0_r.png", {0.0f, 0.5f}, {0.5f, -0.5f})};
 
@@ -31,6 +21,12 @@ int main() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        Player::State s{Player::State::Preparation};
+        if (true) {
+            s = Player::State::Paper;
+        }
+        tk::Animation &a1{p1.animations_[s]};
+
         render.drawImage(a1.getCurrentImage());
         render.drawImage(o2);
 
@@ -39,7 +35,6 @@ int main() {
         glfwSwapBuffers(render.window);
 
         clock.reset();
-
     }
 
 }
