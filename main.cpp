@@ -21,11 +21,10 @@ int main() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        Player::State s{Player::State::Preparation};
-        if (true) {
-            s = Player::State::Paper;
+        if (glfwGetKey(render.window, GLFW_KEY_A) == GLFW_PRESS) {
+            p1.setState(Player::State::Paper);
         }
-        tk::Animation &a1{p1.animations_[s]};
+        auto &a1{p1.getAnimation()};
 
         render.drawImage(a1.getCurrentImage());
         render.drawImage(o2);

@@ -16,7 +16,7 @@ struct Player {
     };
 
     Player(tk::Render &render)
-            : render_{render} {
+            : render_{render}, state_{Player::State::Preparation} {
         animations_.insert({State::Preparation, {}});
         animations_.insert({State::Rock, {}});
         animations_.insert({State::Scissors, {}});
@@ -42,6 +42,12 @@ struct Player {
                     0.4s);
         }
     }
+
+    tk::Animation &getAnimation() { return animations_[state_]; }
+
+    void setState(State s) { state_ = s; }
+
+private:
 
     tk::Render &render_;
     State state_;
